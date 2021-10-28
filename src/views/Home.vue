@@ -8,8 +8,9 @@
   </div>
 </template>
 <script lang="ts">
-import store from "@/store";
 import { computed, defineComponent } from "vue";
+import { useItemsStore } from "@/store/items";
+import { MutationType, StoreModuleNames } from "@/models/store";
 import ItemsListComponent from "@/components/items/ItemsList.component.vue";
 import { ItemInterface } from "@/models/items/Item.interface";
 
@@ -19,17 +20,18 @@ export default defineComponent({
     ItemsListComponent,
   },
   setup() {
-    store.dispatch("loadItems");
+    const itemsStore = useItemsStore();
+    itemsStore.action(MutationType.items.loadItems);
 
     const items = computed(() => {
-      return store.state.items;
+      return itemsStore.state.items;
     });
     const loading = computed(() => {
-      return store.state.loading;
+      return itemsStore.state.loading;
     });
 
     const onSelectItem = (item: ItemInterface) => {
-      store.dispatch("selectItem", {
+      itemsStore.action(MutationType.items.selectItem, {
         id: item.id,
         selected: !item.selected,
       });
